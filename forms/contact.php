@@ -1,41 +1,39 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'contact@example.com';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+function enviarCorreo()
+{
+  $nombre = $_POST['name'];
+  $email = $_POST['email'];
+  $mensaje = $_POST['message'];
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
   
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+  // Definir el correo de destino:
+  $dest = "mcubaque@gmail.com"; 
+   
+  // Estas son cabeceras que se usan para evitar que el correo llegue a SPAM:
+  $headers = "From: $nombre $email\r\n";  
+  $headers .= "X-Mailer: PHP5\n";
+  $headers .= 'MIME-Version: 1.0' . "\n";
+  $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+   
+  // Aqui definimos el asunto y armamos el cuerpo del mensaje
+  $asunto = "Contacto CVITAE";
+  $cuerpo = "Nombre: ".$nombre."<br>";
+  $cuerpo .= "Email: ".$email."<br>";
+  $cuerpo .= "Mensaje: ".$mensaje;
+   
+  // Esta es una pequena validación, que solo envie el correo si todas las variables tiene algo de contenido:
+  if($nombre != '' && $email != '' && $mensaje != ''){
+      mail($dest,$asunto,$cuerpo,$headers); //ENVIAR!
+  }
+}
+  enviarCorreo();
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
-
-  echo $contact->send();
 ?>
+
+ <script type="text/javascript">
+  alert("Mensaje enviado satisfactoriamente");
+  window.location.href = "../index.html";
+ </script>  
